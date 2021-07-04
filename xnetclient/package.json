@@ -1,0 +1,94 @@
+{
+    "name": "@jtl/xnetclient",
+    "version": "5.0.12",
+    "description": "为api提供客户端透明代理,编译版本,只有webportal,完整的tslint支持",
+    "main": "dist/js/index.js",
+    "module": "dist/es/index.js",
+    "types": "types/index.d.ts",
+    "repository": "git@116.62.100.239:jtl3d-platform/xnetclient.git",
+    "author": "yaozhao <yaozhao1@goldmantis.com>",
+    "license": "Internal",
+    "scripts": {
+        "gentypes": "rimraf ./types && tsc -p ./tsconfig.types.json && rimraf ./tmp",
+        "test": "node -r ts-node/register node_modules/jest-cli/bin/jest.js --runInBand",
+        "build": "rimraf ./types && tsc && tsc -p ./tsconfig.es5.json",
+        "prebuild": "rimraf ./dist&rimraf ./src/.generated&ts-node --project tsconfig.generator.json generate.ts",
+        "prepublishOnly": "yarn build&&yarn release",
+        "release": "npx q-scripts standard-version",
+        "lint": "npx q lint",
+        "push": "curl -X POST http://172.21.204.21:8080/job/hengda-department-dev/build --user jtl3d:11b3c96b9040e083142a7b26fdf40784f5",
+        "lint:fix": "npx q lint-fix",
+        "lint:tsc": "tsc --noEmit",
+        "commit": "cross-env HUSKY_SKIP_HOOKS=1 git commit"
+    },
+    "lint-staged": {
+        "*.{ts,tsx}": [
+            "yarn lint:fix",
+            "git add"
+        ]
+    },
+    "jest": {
+        "preset": "ts-jest",
+        "testMatch": [
+            "**/__tests__/*.+(ts|tsx)"
+        ]
+    },
+    "standard-version": {
+        "skip": {
+            "changelog": true,
+            "tag": true
+        }
+    },
+    "dependencies": {
+        "camelcase-object-deep": "^1.1.1",
+        "zipkin": "^0.19.2",
+        "zipkin-instrumentation-axiosjs": "^0.19.2",
+        "zipkin-transport-http": "^0.19.2"
+    },
+    "devDependencies": {
+        "@jtl/q-scripts": "^2.0.76",
+        "@types/bluebird": "^3.5.24",
+        "@types/core-js": "^2.5.0",
+        "@types/crypto-js": "^3.1.38",
+        "@types/jest": "^23.3.9",
+        "@types/lodash": "^4.14.118",
+        "@types/node": "^11.13.0",
+        "auto-upgrade-npm-version": "^1.0.7",
+        "axios": "^0.18.0",
+        "bluebird": "^3.5.3",
+        "cache-storage": "^2.0.1",
+        "chalk": "^2.4.1",
+        "core-js": "^3.0.1",
+        "crypto-js": "^3.1.9-1",
+        "husky": "^3.0.5",
+        "inversify": "^5.0.1",
+        "jest": "^23.6.0",
+        "js-beautify": "^1.8.8",
+        "lodash": "^4.17.11",
+        "moment": "^2.22.2",
+        "node-fetch": "^2.6.0",
+        "path-to-regexp": "^2.4.0",
+        "reflect-metadata": "^0.1.12",
+        "ts-jest": "^23.10.4",
+        "ts-node": "^7.0.1",
+        "yeoman-generator": "^3.1.1",
+        "yeoman-test": "^1.9.1",
+        "yosay": "^2.0.2"
+    },
+    "qu-tools": true,
+    "husky": {
+        "hooks": {
+            "pre-commit": "npx q-scripts pretty-quick --staged && yarn lint:tsc && lint-staged"
+        }
+    },
+    "publishConfig": {
+        "registry": "http://172.21.204.21/",
+        "//172.21.204.21/:_password": "MTIzNDU2",
+        "//172.21.204.21/:username": "jtl3d",
+        "//172.21.204.21/:email": "jtl3d@localhost.com",
+        "//172.21.204.21/:always-auth": false
+    },
+    "browserslist": [
+        "defaults"
+    ]
+}

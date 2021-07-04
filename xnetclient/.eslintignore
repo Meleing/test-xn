@@ -1,0 +1,12 @@
+node_modules/
+tslint/
+dist/
+types/
+test/
+scripts/
+declare.d.ts
+*.worker.ts
+__tests__/
+*.js
+
+src/.generated/

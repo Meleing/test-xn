@@ -1,0 +1,164 @@
+/*=============================================================================
+#
+# Copyright (C) 2017 All rights reserved.
+#
+# Author:	yaozhao
+#
+# Created:	<%-new Date() %>
+#
+# Description:
+# 此文件由代码自动生成,请勿更改此文件中的内容
+#
+=============================================================================*/
+/* eslint-disable */
+import { ClientBase } from '../../utils/clientBase';
+import { injectable, named, inject } from 'inversify';
+import { XNetContainer } from '../../utils/container';
+import { TypeSymbols } from '../../interface/TypeSymbols';
+import { HttpHelperInterface } from '../../interface/httphelper/httphelperinterface';
+import { HttpMethodOptionsInterface } from '../../interface/httphelper/httpmethodoptions';
+import * as Enums from './enums';
+import * as apimodels from './types';
+import * as apimodelsCamel from './types_camel';
+import * as _ from 'lodash';
+
+let logged = false;
+@injectable()
+export class <%=className%>ServiceClient extends ClientBase {
+
+    public static readonly CLASS_NAME = 'XNetClient.<%=tag%>.<%=className%>ServiceClient';
+
+    public static get Instance() {
+        XNetContainer.RegisteService(<%=className%>ServiceClient);
+        return XNetContainer.Resolve<<%=className%>ServiceClient>(<%=className%>ServiceClient);
+    }
+    
+    @inject(TypeSymbols.HttpHelper) @named('<%=tag%>') protected httpHelper: HttpHelperInterface;
+
+    public get token() {
+        return this.httpHelper.getToken;
+    }
+
+  <% methods.forEach( method => {%>    
+    /**
+     * <%=method.summary%>
+     * url : <%=method.path %>
+     * @method
+     * @name <%=method.methodName.split('_')[1] %>_<%=method.method %>
+     <% method.parameters.forEach( parameter => { %>* @param <%=parameter.type %> <%=parameter.camelCaseName %> - <%=parameter.description %> <%} ) %>    
+     * @param header 自定义header
+     */  
+    public async <%=method.methodName.split('_')[1] %>_<%=method.method %> (
+        {<% 
+        let modelPrefix = 'apimodelsCamel.';
+        method.parameters.forEach( parameter => {
+        if(parameter.isHeaderParameter){
+            return;
+        }
+        let paramType = parameter.tsType.target || parameter.tsType.tsType;
+        if(parameter.tsType.target && !(parameter.tsType.target == 'string' || parameter.tsType.target == 'object')){
+            paramType = modelPrefix + paramType;
+        }
+        if(paramType === 'array'){
+          paramType = modelPrefix+parameter.tsType.elementType.target+'[]'
+        } 
+        let paramName = parameter.camelCaseName;
+        if(parameter.camelCaseName == 'function')
+            paramName = 'fun';
+        if(parameter.camelCaseName == 'export')
+            paramName = 'param_export';
+        %><%=paramName%>,        
+        <%} ) %>}: {
+        <% method.parameters.forEach( parameter => {
+        if(parameter.isHeaderParameter){
+            return;
+        }
+        let paramType = parameter.tsType.target || parameter.tsType.tsType;
+        if(parameter.tsType.target && !(parameter.tsType.target == 'string' || parameter.tsType.target == 'object')){
+            paramType = modelPrefix +( paramType?paramType:any);
+        }
+        if(paramType === 'array'){
+            let elementtarget = parameter.tsType.elementType.target;
+            if(!elementtarget){
+                elementtarget = parameter.tsType.elementType.elementType.target;
+            }
+          paramType = (parameter.tsType.elementType.target != 'string'?modelPrefix:'')+elementtarget+'[]'
+        } 
+        let paramName = parameter.camelCaseName;
+        if(parameter.camelCaseName == 'function')
+            paramName = 'fun';
+        if(parameter.camelCaseName == 'export')
+            paramName = 'param_export';
+        if(parameter.tsType.isEnum){
+             paramType = 'Enums.'+ method.methodName + parameter.camelCaseName + 'Enum';
+            // if(parameter.tsType.tsType.match(new RegExp('"', 'g'))){
+            //     paramType = 'string';
+            // }else{
+            //     paramType = 'number';
+            // }
+        }
+        %>'<%=paramName%>'<%=parameter.cardinality %>:<%- paramType  %>,       
+        <%} ) %>        
+        },      
+        options?: HttpMethodOptionsInterface): Promise<<%
+            modelPrefix = 'apimodels.';
+            modelPrefixCamel = 'apimodelsCamel.';
+            let response = method.response.target || method.response.tsType;
+            if(method.response.target && !(method.response.target == 'string' || method.response.target == 'object')){
+                // response =  modelPrefixCamel + response ;
+                response = modelPrefix + response + '&' + modelPrefixCamel + response ;
+            }
+            if(response === 'array'){
+                let t = method.response.elementType.target+'[]';
+                // response = modelPrefixCamel + t ;
+                response = modelPrefix + t + '&' + modelPrefixCamel + t ;
+            }
+        %><%-response  %>> {
+        let _requestUrl = '<%=method.path %>';
+        let b:any = undefined;
+        const queryObj: { [key: string]: any }= {};
+        <% method.parameters.forEach( parameter => { %>
+        <% let paramName = parameter.camelCaseName;
+        if(parameter.camelCaseName == 'function')
+            paramName = 'fun';
+        if(parameter.camelCaseName == 'export')
+            paramName = 'param_export'; %>
+        <% if ( parameter.isQueryParameter ) { %>queryObj['<%=parameter.name%>']=<%=paramName%>;<% } %><% if ( parameter.isPathParameter ) { %>_requestUrl = _requestUrl.replace('{<%=parameter.camelCaseName%>}',<%=parameter.camelCaseName == 'function' ? 'fun' : parameter.camelCaseName%>+'');<% } %><% if ( parameter.isBodyParameter ) {%>b = <%=parameter.camelCaseName == 'function' ? 'fun' : parameter.camelCaseName %>;
+        <% } %>
+        <% } ) %>
+
+        const origin = await this.httpHelper.httpMethod(_requestUrl,'<%=method.method %>', b, queryObj, options);
+
+        // if (origin && origin.items) {
+        //     const createProxy = (item: any) => new Proxy(item, {
+        //         get: (target, p) => {
+        //             if(!logged){
+        //                 logged = true;
+        //                 // const camel = _.camelCase(p as string);
+        //                 // if (camel !== p) {
+        //                 //     console.warn('xnetclient返回值应当使用Camel Case! ',
+        //                 //         `controller:<%=className%>ServiceClient`,
+        //                 //         `method:<%=method.methodName.split('_')[1] %>_<%=method.method %>`,
+        //                 //         // `attribute:${p as string}`,
+        //                 //         `url:<%=method.path %>`
+        //                 //         );
+        //                 // }
+        //             }
+        //             return (target as any)[p];
+        //         }
+        //     });
+        //    if (Array.isArray(origin.items)) {
+        //         origin.items = origin.items.map((item: any) => createProxy(item));
+        //     } else {
+        //         origin.items = createProxy(origin.items);
+        //     }
+        // }
+
+        return origin;
+    }
+  <%} ) %>
+    
+}
+
+export const getInstance = () => <%=className%>ServiceClient.Instance;
+export default getInstance;

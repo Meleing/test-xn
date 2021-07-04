@@ -1,0 +1,18 @@
+/* eslint-disable */
+/*=============================================================================
+#
+# Copyright (C) 2017 All rights reserved.
+#
+# Author:	yaozhao
+#
+# Created:	<%-new Date() %>
+#
+# Description:
+# 此文件由代码自动生成,请勿更改此文件中的内容
+#
+=============================================================================*/ 
+<% classNames.forEach(className =>  { %> 
+import { <%-className.className %>ServiceClient }from './<%-className.lowerName %>';  <% }) %> 
+
+export { <% classNames.forEach(className =>  { %>  <%-className.className %>ServiceClient,  <% }) %> 
+}; 

@@ -1,0 +1,25 @@
+/*=============================================================================
+#
+# Copyright (C) 2017 All rights reserved.
+#
+# Author: yaozhao
+#
+# Created: <%-new Date() %>
+#
+# Description:
+# 此文件由代码自动生成,请勿更改此文件中的内容
+#
+=============================================================================*/
+/* eslint-disable */
+<% if(enums.length === 0){%>
+export type NoneTypes = void;
+<%}%>
+<% enums.forEach(element =>  {
+      let paramName = element.name.replace('.', ''); 
+      let postfix; 
+     if (element.tsType.tsType.match(new RegExp('"', 'g'))) {
+        postfix = '| string'; 
+     }else {
+        postfix = '| number'; 
+     } %>
+export type <%-paramName %>Enum = <%-element.tsType.tsType %><%-postfix %> ; <% }) %>

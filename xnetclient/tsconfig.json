@@ -1,0 +1,12 @@
+{
+    "extends": "./node_modules/@jtl/q-tsconfig/tsconfig.base",
+    "compilerOptions": {
+        "noUnusedLocals": false,
+        "declaration": true,
+        "declarationDir": "./types",
+        "outDir": "./dist/es"
+    },
+    "include": [
+    "src/**/*"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+    // 使用 IntelliSense 了解相关属性。
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "jest:debug",
+            "type": "node",
+            "request": "launch",
+            "args": ["${relativeFile}", "--runInBand"],
+            "program": "${workspaceRoot}/node_modules/jest-cli/bin/jest.js",
+            "runtimeArgs": ["-r", "ts-node/register"],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "ts:debug",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": ["-r", "ts-node/register"],
+            "args": ["${relativeFile}"],
+            "env": {
+                "TS_NODE_TRANSPILE_ONLY": "true",
+                "TS_NODE_PROJECT": "tsconfig.generator.json"
+            }
+        },
+        {
+            "name": "ts:generate.ts",
+            "type": "node",
+            "request": "launch",
+            "runtimeArgs": ["-r", "ts-node/register"],
+            "args": ["generate.ts"],
+            "env": {
+                "TS_NODE_TRANSPILE_ONLY": "true",
+                "TS_NODE_PROJECT": "tsconfig.generator.json"
+            }
+        }
+    ]
+}

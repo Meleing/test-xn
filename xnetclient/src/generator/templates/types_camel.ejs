@@ -1,0 +1,29 @@
+/*=============================================================================
+#
+# Copyright (C) 2017 All rights reserved.
+#
+# Author:	yaozhao
+#
+# Created:	<%-new Date() %>
+#
+# Description:
+# 此文件由代码自动生成,请勿更改此文件中的内容
+#
+=============================================================================*/
+/* eslint-disable */ 
+<% definitions.forEach(element =>  { %>
+<% if(element.tsType.properties) { %>
+export interface <%-element.name.replace("«", "").replace("»", "") %>  { <% element.tsType.properties.forEach(propertity =>  { %> 
+    /**
+     * <%- propertity.description %>
+     * <% if (propertity.isEnum) { %> <%- propertity.tsType %> <% } %>
+     *
+     * @type <% if ( propertity.isRef ) { %> <%- propertity.target %> <% } %><% if ( propertity.isAtomic ) { if (propertity.isEnum) { %> string <% } else { %> <%- propertity.tsType %> <% } } %> <% if ( propertity.isArray ) { %> <%-propertity.elementType.target %>[]<% } %>
+     * @memberof <%- element.name.replace("«","").replace("»","") %>
+     */ 
+     <%-_.camelCase(propertity.name) %><% if (propertity.optional ) { %>?<% } %> : <% if (propertity.isRef ) { %>  <%-propertity.target %>  <% } %><% if (propertity.isAtomic ) {if (propertity.isEnum) {if (propertity.tsType.match(new RegExp('"', 'g'))) { %>  <%-propertity.tsType %>  | string <% }else { %>  <%-propertity.tsType %>  | number <% }}else { %>  <%-propertity.tsType %>  <% }} %>  <% if (propertity.isArray) { %>  <%-propertity.elementType.target %> [] <% } %> ;  <% }) %> 
+} <% } %><% }) %> 
+
+export type CustomHeader =  {
+    [key:string]:string; 
+}
